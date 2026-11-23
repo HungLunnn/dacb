@@ -1,0 +1,34 @@
+services:
+  backend:
+    build:
+      context: ./Backend-qlyPhong
+    container_name: quanlyphong-backend
+    restart: unless-stopped
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://host.docker.internal:3306/quan_ly_phong?useUnicode=yes&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./Backend-qlyPhong:/app
+      - backend-maven-cache:/root/.m2
+
+  frontend:
+    build:
+      context: ./Frontend-QlyPhong
+    container_name: quanlyphong-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5174:5174"
+    volumes:
+      - ./Frontend-QlyPhong:/app
+      - frontend-node-modules:/app/node_modules
+
+volumes:
+  backend-maven-cache:
+  frontend-node-modules:
